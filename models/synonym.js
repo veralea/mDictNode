@@ -3,7 +3,9 @@ const synonymSchema = new Schema(
     {
         root_id: String,
         synonym: String,
-        synonymTranslate: String
+        synonymTranslateRu: String,
+        synonymTranslateEn: String,
+        synonymTranslateFr: String
     },
     {
         timestamps: true

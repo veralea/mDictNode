@@ -3,7 +3,9 @@ const familySchema = new Schema(
     {
         root_id: String,
         family: String,
-        familyTranslate: String,
+        familyTranslateRu: String,
+        familyTranslateEn: String,
+        familyTranslateFr: String
     },
     {
         timestamps: true

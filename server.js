@@ -64,7 +64,83 @@ app.use(cors());
         db.close();
      });
 
-}); 
+});
+
+app.get('/gettranslation/:_id',(req,res)=>{
+   const _id = req.params._id;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      dbo.collection("translations").find({'_id':ObjectID(_id)}).toArray(function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        console.log(result);
+        db.close();
+      });
+    }); 
+})
+app.get('/getfamily/:_id',(req,res)=>{
+   const _id = req.params._id;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      dbo.collection("families").find({'_id':ObjectID(_id)}).toArray(function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        console.log(result);
+        db.close();
+      });
+    }); 
+})
+app.get('/getsynonym/:_id',(req,res)=>{
+   const _id = req.params._id;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      dbo.collection("synonyms").find({'_id':ObjectID(_id)}).toArray(function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        console.log(result);
+        db.close();
+      });
+    }); 
+})
+app.get('/getantonym/:_id',(req,res)=>{
+   const _id = req.params._id;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      dbo.collection("antonyms").find({'_id':ObjectID(_id)}).toArray(function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        console.log(result);
+        db.close();
+      });
+    }); 
+})
+app.get('/getphrase/:_id',(req,res)=>{
+   const _id = req.params._id;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      dbo.collection("phrases").find({'_id':ObjectID(_id)}).toArray(function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        console.log(result);
+        db.close();
+      });
+    }); 
+})
 
 app.get('/getroot/:root_id',(req,res)=>{
    const root_id = req.params.root_id;
@@ -183,7 +259,144 @@ app.get('/getroots/:benjan/:letter1/:letter2/:letter3/:letter4', (req, res)=>{
       });
     }); 
 })
-
+app.put('/updatetranslation/:_id/:preposition/:translateRu/:translateEn/:translateFr/:sentence'+
+'/:sentenceTranslateRu/:sentenceTranslateEn/:sentenceTranslateFr',(req, res) =>{
+   const _id = req.params._id;
+   const preposition = req.params.preposition;
+   const translateRu = req.params.translateRu;
+   const translateEn = req.params.translateEn;
+   const translateFr = req.params.translateFr;
+   const sentence = req.params.sentence;
+   const sentenceTranslateRu = req.params.sentenceTranslateRu; 
+   const sentenceTranslateEn = req.params.sentenceTranslateEn; 
+   const sentenceTranslateFr = req.params.sentenceTranslateFr; 
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      var myquery = { '_id': ObjectID(_id) };
+      var newvalues = { $set: {
+         preposition: preposition,
+         translateRu: translateRu,
+         translateEn: translateEn,
+         translateFr: translateFr,
+         sentence: sentence,
+         sentenceTranslateRu: sentenceTranslateRu,
+         sentenceTranslateEn: sentenceTranslateEn,
+         sentenceTranslateFr: sentenceTranslateFr   
+     } };
+      dbo.collection("translations").updateOne(myquery, newvalues, function(err, result) {
+        if (err) throw err;
+        console.log("1 translation updated");
+        res.send(result);
+        db.close();
+      });
+    });
+})
+app.put('/updatefamily/:_id/:family/:familyTranslateRu/:familyTranslateEn/:familyTranslateFr',(req, res) =>{
+   const _id = req.params._id;
+   const family = req.params.family;
+   const familyTranslateRu = req.params.familyTranslateRu;
+   const familyTranslateEn = req.params.familyTranslateEn;
+   const familyTranslateFr = req.params.familyTranslateFr;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      var myquery = { '_id': ObjectID(_id) };
+      var newvalues = { $set: {
+         family: family,
+         familyTranslateRu: familyTranslateRu,
+         familyTranslateEn: familyTranslateEn,
+         familyTranslateFr: familyTranslateFr
+     } };
+      dbo.collection("families").updateOne(myquery, newvalues, function(err, result) {
+        if (err) throw err;
+        console.log("1 family updated");
+        res.send(result);
+        db.close();
+      });
+    });
+})
+app.put('/updatesynonym/:_id/:synonym/:synonymTranslateRu/:synonymTranslateEn/:synonymTranslateFr',(req, res) =>{
+   const _id = req.params._id;
+   const synonym = req.params.synonym;
+   const synonymTranslateRu = req.params.synonymTranslateRu;
+   const synonymTranslateEn = req.params.synonymTranslateEn;
+   const synonymTranslateFr = req.params.synonymTranslateFr;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      var myquery = { '_id': ObjectID(_id) };
+      var newvalues = { $set: {
+         synonym: synonym,
+         synonymTranslateRu: synonymTranslateRu,
+         synonymTranslateEn: synonymTranslateEn,
+         synonymTranslateFr: synonymTranslateFr
+     } };
+      dbo.collection("synonyms").updateOne(myquery, newvalues, function(err, result) {
+        if (err) throw err;
+        console.log("1 synonym updated");
+        res.send(result);
+        db.close();
+      });
+    });
+})
+app.put('/updateantonym/:_id/:antonym/:antonymTranslateRu/:antonymTranslateEn/:antonymTranslateFr',(req, res) =>{
+   const _id = req.params._id;
+   const antonym = req.params.antonym;
+   const antonymTranslateRu = req.params.antonymTranslateRu;
+   const antonymTranslateEn = req.params.antonymTranslateEn;
+   const antonymTranslateFr = req.params.antonymTranslateFr;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      var myquery = { '_id': ObjectID(_id) };
+      var newvalues = { $set: {
+         antonym: antonym,
+         antonymTranslateRu: antonymTranslateRu,
+         antonymTranslateEn: antonymTranslateEn,
+         antonymTranslateFr: antonymTranslateFr
+     } };
+      dbo.collection("antonyms").updateOne(myquery, newvalues, function(err, result) {
+        if (err) throw err;
+        console.log("1 antonym updated");
+        res.send(result);
+        db.close();
+      });
+    });
+})
+app.put('/updatephrase/:_id/:phrase/:phraseTranslateRu/:phraseTranslateEn/:phraseTranslateFr',(req, res) =>{
+   const _id = req.params._id;
+   const phrase = req.params.phrase;
+   const phraseTranslateRu = req.params.phraseTranslateRu;
+   const phraseTranslateEn = req.params.phraseTranslateEn;
+   const phraseTranslateFr = req.params.phraseTranslateFr;
+   
+   MongoClient.connect(url, function(err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      var myquery = { '_id': ObjectID(_id) };
+      var newvalues = { $set: {
+         phrase: phrase,
+         phraseTranslateRu: phraseTranslateRu,
+         phraseTranslateEn: phraseTranslateEn,
+         phraseTranslateFr: phraseTranslateFr
+     } };
+      dbo.collection("phrases").updateOne(myquery, newvalues, function(err, result) {
+        if (err) throw err;
+        console.log("1 phrase updated");
+        res.send(result);
+        db.close();
+      });
+    });
+})
 app.put('/updateforms/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descript/:sound/:inf/:infS/:p1s/:p1sS/:p2sm/:p2smS/:p2sw/:p2swS/:p3sm/:p3smS/'+
 ':p3sw/:p3swS/:p1m/:p1mS/:p2mm/:p2mmS/:p2mw/:p2mwS/:p3m/:p3mS/:nsm/:nsmS/:nsw/:nswS/:nmm/:nmmS/:nmw/:nmwS/:f1s'+
 '/:f1sS/:f2sm/:f2smS/:f2sw/:f2swS/:f3sm/:f3smS/:f3sw/:f3swS/:f1m/:f1mS/:f2mm/:f2mmS/:f2mw/:f2mwS/:f3m/:f3mS/:ism/:ismS/:isw'+
@@ -522,12 +735,17 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
 
   })
 
-  app.post('/newtranslation/:root_id/:preposition/:translate/:sentence/:sentenceTranslate/:sentenceSound', (req, res)=>{
+  app.post('/newtranslation/:root_id/:preposition/:translateRu/:translateEn/:translateFr/:sentence/:sentenceTranslateRu'+
+  '/:sentenceTranslateEn/:sentenceTranslateFr/:sentenceSound', (req, res)=>{
       const root_id = req.params.root_id;
       const preposition = req.params.preposition;
-      const translate = req.params.translate;
+      const translateRu = req.params.translateRu;
+      const translateEn = req.params.translateEn;
+      const translateFr = req.params.translateFr;
       const sentence = req.params.sentence;
-      const sentenceTranslate = req.params.sentenceTranslate;
+      const sentenceTranslateRu = req.params.sentenceTranslateRu;
+      const sentenceTranslateEn = req.params.sentenceTranslateEn;
+      const sentenceTranslateFr = req.params.sentenceTranslateFr;
       const sentenceSound = req.params.sentenceSound;
   
       MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
@@ -536,9 +754,13 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           var newtranslation = { 
               root_id: root_id,
               preposition: preposition,
-              translate: translate,
+              translateRu: translateRu,
+              translateEn: translateEn,
+              translateFr: translateFr,
               sentence: sentence,
-              sentenceTranslate: sentenceTranslate,
+              sentenceTranslateRu: sentenceTranslateRu,
+              sentenceTranslateEn: sentenceTranslateEn,
+              sentenceTranslateFr: sentenceTranslateFr,
               sentenceSound: sentenceSound
           };
           dbo.collection("translations").insertOne(newtranslation, function(err, result) {
@@ -549,10 +771,12 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           });
       });
    }) 
-   app.post('/newphrase/:root_id/:phrase/:phraseTranslate', (req, res)=>{
+   app.post('/newphrase/:root_id/:phrase/:phraseTranslateRu/:phraseTranslateEn/:phraseTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const phrase = req.params.phrase;
-      const phraseTranslate = req.params.phraseTranslate;
+      const phraseTranslateRu = req.params.phraseTranslateRu;
+      const phraseTranslateEn = req.params.phraseTranslateEn;
+      const phraseTranslateFr = req.params.phraseTranslateFr;
   
       MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
           if (err) throw err;
@@ -560,7 +784,9 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           var newphrase = { 
               root_id: root_id,
               phrase: phrase,
-              phraseTranslate: phraseTranslate
+              phraseTranslateRu: phraseTranslateRu,
+              phraseTranslateEn: phraseTranslateEn,
+              phraseTranslateFr: phraseTranslateFr,
           };
           dbo.collection("phrases").insertOne(newphrase, function(err, result) {
           if (err) throw err;
@@ -570,10 +796,12 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           });
       });
    })
-   app.post('/newfamily/:root_id/:family/:familyTranslate', (req, res)=>{
+   app.post('/newfamily/:root_id/:family/:familyTranslateRu/:familyTranslateEn/:familyTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const family = req.params.family;
-      const familyTranslate = req.params.familyTranslate;
+      const familyTranslateRu = req.params.familyTranslateRu;
+      const familyTranslateEn = req.params.familyTranslateEn;
+      const familyTranslateFr = req.params.familyTranslateFr;
   
       MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
           if (err) throw err;
@@ -581,7 +809,9 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           var newfamily = { 
               root_id: root_id,
               family: family,
-              familyTranslate: familyTranslate
+              familyTranslateRu: familyTranslateRu,
+              familyTranslateEn: familyTranslateEn,
+              familyTranslateFr: familyTranslateFr
           };
           dbo.collection("families").insertOne(newfamily, function(err, result) {
           if (err) throw err;
@@ -591,10 +821,12 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           });
       });
    })
-   app.post('/newsynonym/:root_id/:synonym/:synonymTranslate', (req, res)=>{
+   app.post('/newsynonym/:root_id/:synonym/:synonymTranslateRu/:synonymTranslateEn/:synonymTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const synonym = req.params.synonym;
-      const synonymTranslate = req.params.synonymTranslate;
+      const synonymTranslateRu = req.params.synonymTranslateRu;
+      const synonymTranslateEn = req.params.synonymTranslateEn;
+      const synonymTranslateFr = req.params.synonymTranslateFr;
   
       MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
           if (err) throw err;
@@ -602,7 +834,9 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           var newsynonym = { 
               root_id: root_id,
               synonym: synonym,
-              synonymTranslate: synonymTranslate
+              synonymTranslateRu: synonymTranslateRu,
+              synonymTranslateEn: synonymTranslateEn,
+              synonymTranslateFr: synonymTranslateFr
           };
           dbo.collection("synonyms").insertOne(newsynonym, function(err, result) {
           if (err) throw err;
@@ -612,10 +846,12 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           });
       });
    }) 
-   app.post('/newantonym/:root_id/:antonym/:antonymTranslate', (req, res)=>{
+   app.post('/newantonym/:root_id/:antonym/:antonymTranslateRu/:antonymTranslateEn/:antonymTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const antonym = req.params.antonym;
-      const antonymTranslate = req.params.antonymTranslate;
+      const antonymTranslateRu = req.params.antonymTranslateRu;
+      const antonymTranslateEn = req.params.antonymTranslateEn;
+      const antonymTranslateFr = req.params.antonymTranslateFr;
   
       MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
           if (err) throw err;
@@ -623,7 +859,9 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           var newantonym = { 
               root_id: root_id,
               antonym: antonym,
-              antonymTranslate: antonymTranslate
+              antonymTranslateRu: antonymTranslateRu,
+              antonymTranslateEn: antonymTranslateEn,
+              antonymTranslateFr: antonymTranslateFr
           };
           dbo.collection("antonyms").insertOne(newantonym, function(err, result) {
           if (err) throw err;
@@ -654,7 +892,110 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   })         
+   })
+
+   //delete
+app.delete('/deleteroot/:root_id', (req, res) => {
+   MongoClient.connect(url, {
+     useNewUrlParser: true
+   }, function (err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var root_id = req.params.root_id;
+     dbo.collection("roots").deleteOne({'root_id': root_id}, function (err, result) {
+       if (err) throw err;
+       console.log(result);
+       res.send(result);
+       db.close();
+     });
+   });
+ }) 
+ 
+ app.delete('/deletetranslation/:_id',(req,res)=>{
+   const _id = req.params._id;
+   MongoClient.connect(url, {
+      useNewUrlParser: true
+    }, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      
+      dbo.collection("translations").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+        db.close();
+      });
+    });
+ })
+ app.delete('/deletefamily/:_id',(req,res)=>{
+   const _id = req.params._id;
+   MongoClient.connect(url, {
+      useNewUrlParser: true
+    }, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      
+      dbo.collection("families").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+        db.close();
+      });
+    });
+ })
+ app.delete('/deletesynonym/:_id',(req,res)=>{
+   const _id = req.params._id;
+   MongoClient.connect(url, {
+      useNewUrlParser: true
+    }, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      
+      dbo.collection("synonyms").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+        db.close();
+      });
+    });
+ })
+ app.delete('/deleteantonym/:_id',(req,res)=>{
+   const _id = req.params._id;
+   MongoClient.connect(url, {
+      useNewUrlParser: true
+    }, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      
+      dbo.collection("antonyms").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+        db.close();
+      });
+    });
+ })
+ app.delete('/deletephrase/:_id',(req,res)=>{
+   const _id = req.params._id;
+   MongoClient.connect(url, {
+      useNewUrlParser: true
+    }, function (err, db) {
+      if (err) throw err;
+      var dbo = db.db("mordict");
+      var ObjectID = require('mongodb').ObjectID;
+      
+      dbo.collection("phrases").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        res.send(result);
+        db.close();
+      });
+    });
+ })
 
 let port = process.env.PORT || 8000;
 app.listen(port, function () {

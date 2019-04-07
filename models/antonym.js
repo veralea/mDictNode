@@ -3,7 +3,9 @@ const antonymSchema = new Schema(
     {
         root_id: String,
         antonym: String,
-        antonymTranslate: String
+        antonymTranslateRu: String,
+        antonymTranslateEn: String,
+        antonymTranslateFr: String,
     },
     {
         timestamps: true

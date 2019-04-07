@@ -3,7 +3,9 @@ const phraseSchema = new Schema(
     {
         root_id: String,
         phrase: String,
-        phraseTranslate: String
+        phraseTranslateRu: String,
+        phraseTranslateEn: String,
+        phraseTranslateFr: String,
     },
     {
         timestamps: true

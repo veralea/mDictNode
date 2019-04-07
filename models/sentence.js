@@ -3,7 +3,9 @@ const sentenceSchema = new Schema(
     {
         root_id: String,
         sentence: String,
-        sentenceTranslate: String,
+        sentenceTranslateRu: String,
+        sentenceTranslateEn: String,
+        sentenceTranslateFr: String,
         sentenceSound: String
     },
     {
