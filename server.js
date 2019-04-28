@@ -61,8 +61,14 @@ app.use(cors());
      dbo.createCollection("sentencies", function(err, res) {
         if (err) throw err;
         console.log("Collection sentensies created!");
-        db.close();
+        
      });
+     
+     dbo.createCollection("activepassives", function(err, res) {
+      if (err) throw err;
+      console.log("Collection activepassives created!");
+      db.close();
+   });
 
 });
 
@@ -171,6 +177,34 @@ app.get('/gettranslations/:root_id',(req,res)=>{
 
 })
 
+app.get('/getactivepassives/:active_id',(req,res)=>{
+  const active_id = req.params.active_id;
+  MongoClient.connect(url, function(err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     dbo.collection("activepassives").find({active_id:active_id}).toArray(function(err, result) {
+       if (err) throw err;
+       console.dir(result);
+       res.send(result);
+       db.close();
+     });
+   }); 
+
+})
+app.get('/getactivepassives1/:passive_id',(req,res)=>{
+  const passive_id = req.params.passive_id;
+  MongoClient.connect(url, function(err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     dbo.collection("activepassives").find({passive_id:passive_id}).toArray(function(err, result) {
+       if (err) throw err;
+       console.dir(result);
+       res.send(result);
+       db.close();
+     });
+   }); 
+
+})
 app.get('/getphrases/:root_id',(req,res)=>{
    const root_id = req.params.root_id;
    MongoClient.connect(url, function(err, db) {
@@ -258,6 +292,25 @@ app.get('/getroots/:benjan/:letter1/:letter2/:letter3/:letter4', (req, res)=>{
         db.close();
       });
     }); 
+})
+app.get('/getverbsbyletters/:benjan/:root_id/:letter1/:letter2/:letter3/:letter4', (req, res)=>{
+  const benjan = req.params.benjan;
+  const root_id = req.params.root_id;
+  const letter1 = req.params.letter1;
+  const letter2 = req.params.letter2;
+  const letter3 = req.params.letter3;
+  const letter4 = req.params.letter4;
+  MongoClient.connect(url, function(err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var query = {letter1:letter1, letter2:letter2, letter3:letter3, letter4:letter4, root_id: { $not:{$eq:root_id}},benjan:{$not:{$eq:benjan}}};
+     dbo.collection("roots").find(query).toArray(function(err, result) {
+       if (err) throw err;
+       res.send(result)
+       console.dir(result);
+       db.close();
+     });
+   }); 
 })
 app.put('/updatetranslation/:_id/:preposition/:translateRu/:translateEn/:translateFr/:sentence'+
 '/:sentenceTranslateRu/:sentenceTranslateEn/:sentenceTranslateFr',(req, res) =>{
@@ -894,6 +947,25 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
       });
    })
 
+   app.post('/newactivpassiv/:active_id/:passive_id', (req, res)=>{
+    const active_id = req.params.active_id;
+    const passive_id = req.params.passive_id;
+    MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mordict");
+        var newactivepassive = { 
+            active_id: active_id,
+            passive_id: passive_id
+        };
+        dbo.collection("activepassives").insertOne(newactivepassive, function(err, result) {
+        if (err) throw err;
+        console.log("1 activepassive insered");
+        res.send(result);
+        db.close();
+        });
+    });
+ })
+
    //delete
 app.delete('/deleteroot/:root_id', (req, res) => {
    MongoClient.connect(url, {
@@ -996,7 +1068,23 @@ app.delete('/deleteroot/:root_id', (req, res) => {
       });
     });
  })
-
+ app.delete('/deleteactivepassive/:_id',(req,res)=>{
+  const _id = req.params._id;
+  MongoClient.connect(url, {
+     useNewUrlParser: true
+   }, function (err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var ObjectID = require('mongodb').ObjectID;
+     
+     dbo.collection("activepassives").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+       if (err) throw err;
+       console.log(result);
+       res.send(result);
+       db.close();
+     });
+   });
+})
 let port = process.env.PORT || 8000;
 app.listen(port, function () {
     console.log('Server listen on port', port)
