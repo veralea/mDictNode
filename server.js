@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 // const url = "mongodb://localhost:27017/";
-const url = "mongodb://mordict-6135:jMHRmt2GGY1ZyK0ksaBqhvqNSFqA6h@db-mordict-6135.nodechef.com:5383/mordict";
+const url = "mongodb://mordict-6518:V5p6ZxwtJnGrKVSPCcogji6nURiR0a@db-mordict-6518.nodechef.com:5421/mordict";
 
 const app = express();
 app.use(express.static('public'));
