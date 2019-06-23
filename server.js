@@ -1085,6 +1085,17 @@ app.delete('/deleteroot/:root_id', (req, res) => {
      });
    });
 })
+
+
+app.get ('/createdump',(req,res)=>{
+  var backup = require('mongodb-backup');
+  backup({
+    uri: url, // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
+    root: "D:/copyDataBase"
+  });
+  console.log("dump created");
+  res.send(true);
+})
 let port = process.env.PORT || 8000;
 app.listen(port, function () {
     console.log('Server listen on port', port)
