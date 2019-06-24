@@ -48,6 +48,11 @@ app.use(cors());
         console.log("Collection families created!");
         // db.close();
      });
+     dbo.createCollection("familiesverbs", function(err, res) {
+      if (err) throw err;
+      console.log("Collection familiesverbs created!");
+      // db.close();
+   });
      dbo.createCollection("antonyms", function(err, res) {
         if (err) throw err;
         console.log("Collection antonyms created!");
@@ -101,6 +106,21 @@ app.get('/getfamily/:_id',(req,res)=>{
         db.close();
       });
     }); 
+})
+app.get('/getfamilyverb/:_id',(req,res)=>{
+  const _id = req.params._id;
+  
+  MongoClient.connect(url, function(err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var ObjectID = require('mongodb').ObjectID;
+     dbo.collection("familiesverbs").find({'_id':ObjectID(_id)}).toArray(function(err, result) {
+       if (err) throw err;
+       res.send(result);
+       console.log(result);
+       db.close();
+     });
+   }); 
 })
 app.get('/getsynonym/:_id',(req,res)=>{
    const _id = req.params._id;
@@ -224,12 +244,28 @@ app.get('/getfamilies/:root_id',(req,res)=>{
    MongoClient.connect(url, function(err, db) {
       if (err) throw err;
       var dbo = db.db("mordict");
-      dbo.collection("families").find({root_id:root_id}).toArray(function(err, result) {
+      var mysort = {family: 1};
+      dbo.collection("families").find({root_id:root_id}).sort(mysort).toArray(function(err, result) {
         if (err) throw err;
         res.send(result);
         db.close();
       });
     }); 
+
+})
+
+app.get('/getfamiliesverbs/:root_id',(req,res)=>{
+  const root_id = req.params.root_id;
+  MongoClient.connect(url, function(err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var mysort = {familyverb: 1};
+     dbo.collection("familiesverbs").find({root_id:root_id}).sort(mysort).toArray(function(err, result) {
+       if (err) throw err;
+       res.send(result);
+       db.close();
+     });
+   }); 
 
 })
 
@@ -372,6 +408,34 @@ app.put('/updatefamily/:_id/:family/:familyTranslateRu/:familyTranslateEn/:famil
       });
     });
 })
+
+app.put('/updatefamilyverb/:_id/:familyverb/:familyverbTranslateRu/:familyverbTranslateEn/:familyverbTranslateFr',(req, res) =>{
+  const _id = req.params._id;
+  const familyverb = req.params.familyverb;
+  const familyverbTranslateRu = req.params.familyverbTranslateRu;
+  const familyverbTranslateEn = req.params.familyverbTranslateEn;
+  const familyverbTranslateFr = req.params.familyverbTranslateFr;
+  
+  MongoClient.connect(url, function(err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var ObjectID = require('mongodb').ObjectID;
+     var myquery = { '_id': ObjectID(_id) };
+     var newvalues = { $set: {
+        familyverb: familyverb,
+        familyverbTranslateRu: familyverbTranslateRu,
+        familyverbTranslateEn: familyverbTranslateEn,
+        familyverbTranslateFr: familyverbTranslateFr
+    } };
+     dbo.collection("familiesverbs").updateOne(myquery, newvalues, function(err, result) {
+       if (err) throw err;
+       console.log("1 familyverb updated");
+       res.send(result);
+       db.close();
+     });
+   });
+})
+
 app.put('/updatesynonym/:_id/:synonym/:synonymTranslateRu/:synonymTranslateEn/:synonymTranslateFr',(req, res) =>{
    const _id = req.params._id;
    const synonym = req.params.synonym;
@@ -786,9 +850,9 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
     });
     
 
-  })
+})
 
-  app.post('/newtranslation/:root_id/:preposition/:translateRu/:translateEn/:translateFr/:sentence/:sentenceTranslateRu'+
+app.post('/newtranslation/:root_id/:preposition/:translateRu/:translateEn/:translateFr/:sentence/:sentenceTranslateRu'+
   '/:sentenceTranslateEn/:sentenceTranslateFr/:sentenceSound', (req, res)=>{
       const root_id = req.params.root_id;
       const preposition = req.params.preposition;
@@ -823,8 +887,8 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   }) 
-   app.post('/newphrase/:root_id/:phrase/:phraseTranslateRu/:phraseTranslateEn/:phraseTranslateFr', (req, res)=>{
+}) 
+app.post('/newphrase/:root_id/:phrase/:phraseTranslateRu/:phraseTranslateEn/:phraseTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const phrase = req.params.phrase;
       const phraseTranslateRu = req.params.phraseTranslateRu;
@@ -848,8 +912,8 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   })
-   app.post('/newfamily/:root_id/:family/:familyTranslateRu/:familyTranslateEn/:familyTranslateFr', (req, res)=>{
+})
+app.post('/newfamily/:root_id/:family/:familyTranslateRu/:familyTranslateEn/:familyTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const family = req.params.family;
       const familyTranslateRu = req.params.familyTranslateRu;
@@ -873,8 +937,35 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   })
-   app.post('/newsynonym/:root_id/:synonym/:synonymTranslateRu/:synonymTranslateEn/:synonymTranslateFr', (req, res)=>{
+})
+
+app.post('/newfamilyverb/:root_id/:familyverb/:familyverbTranslateRu/:familyverbTranslateEn/:familyverbTranslateFr', (req, res)=>{
+    const root_id = req.params.root_id;
+    const familyverb = req.params.familyverb;
+    const familyverbTranslateRu = req.params.familyverbTranslateRu;
+    const familyverbTranslateEn = req.params.familyverbTranslateEn;
+    const familyverbTranslateFr = req.params.familyverbTranslateFr;
+
+    MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mordict");
+        var newfamilyverb = { 
+            root_id: root_id,
+            familyverb: familyverb,
+            familyverbTranslateRu: familyverbTranslateRu,
+            familyverbTranslateEn: familyverbTranslateEn,
+            familyverbTranslateFr: familyverbTranslateFr
+        };
+        dbo.collection("familiesverbs").insertOne(newfamilyverb, function(err, result) {
+        if (err) throw err;
+        console.log("1 familyverb insered");
+        res.send(result);
+        db.close();
+        });
+    });
+})
+
+app.post('/newsynonym/:root_id/:synonym/:synonymTranslateRu/:synonymTranslateEn/:synonymTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const synonym = req.params.synonym;
       const synonymTranslateRu = req.params.synonymTranslateRu;
@@ -898,8 +989,8 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   }) 
-   app.post('/newantonym/:root_id/:antonym/:antonymTranslateRu/:antonymTranslateEn/:antonymTranslateFr', (req, res)=>{
+}) 
+app.post('/newantonym/:root_id/:antonym/:antonymTranslateRu/:antonymTranslateEn/:antonymTranslateFr', (req, res)=>{
       const root_id = req.params.root_id;
       const antonym = req.params.antonym;
       const antonymTranslateRu = req.params.antonymTranslateRu;
@@ -923,8 +1014,8 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   }) 
-   app.post('/newsentence/:root_id/:sentence/:sentenceTranslate/:sentenceSound', (req, res)=>{
+}) 
+app.post('/newsentence/:root_id/:sentence/:sentenceTranslate/:sentenceSound', (req, res)=>{
       const root_id = req.params.root_id;
       const sentence = req.params.sentence;
       const sentenceTranslate = req.params.sentenceTranslate;
@@ -945,9 +1036,9 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
           db.close();
           });
       });
-   })
+})
 
-   app.post('/newactivpassiv/:active_id/:passive_id', (req, res)=>{
+app.post('/newactivpassiv/:active_id/:passive_id', (req, res)=>{
     const active_id = req.params.active_id;
     const passive_id = req.params.passive_id;
     MongoClient.connect(url,  {useNewUrlParser: true }, function(err, db) {
@@ -964,7 +1055,7 @@ app.post('/newroot/:root_id/:benjan/:letter1/:letter2/:letter3/:letter4/:descrip
         db.close();
         });
     });
- })
+})
 
    //delete
 app.delete('/deleteroot/:root_id', (req, res) => {
@@ -981,9 +1072,9 @@ app.delete('/deleteroot/:root_id', (req, res) => {
        db.close();
      });
    });
- }) 
+}) 
  
- app.delete('/deletetranslation/:_id',(req,res)=>{
+app.delete('/deletetranslation/:_id',(req,res)=>{
    const _id = req.params._id;
    MongoClient.connect(url, {
       useNewUrlParser: true
@@ -1000,7 +1091,7 @@ app.delete('/deleteroot/:root_id', (req, res) => {
       });
     });
  })
- app.delete('/deletefamily/:_id',(req,res)=>{
+app.delete('/deletefamily/:_id',(req,res)=>{
    const _id = req.params._id;
    MongoClient.connect(url, {
       useNewUrlParser: true
@@ -1017,7 +1108,26 @@ app.delete('/deleteroot/:root_id', (req, res) => {
       });
     });
  })
- app.delete('/deletesynonym/:_id',(req,res)=>{
+
+app.delete('/deletefamilyverb/:_id',(req,res)=>{
+  const _id = req.params._id;
+  MongoClient.connect(url, {
+     useNewUrlParser: true
+   }, function (err, db) {
+     if (err) throw err;
+     var dbo = db.db("mordict");
+     var ObjectID = require('mongodb').ObjectID;
+     
+     dbo.collection("familiesverbs").deleteOne({'_id': ObjectID(_id)}, function (err, result) {
+       if (err) throw err;
+       console.log(result);
+       res.send(result);
+       db.close();
+     });
+   });
+})
+
+app.delete('/deletesynonym/:_id',(req,res)=>{
    const _id = req.params._id;
    MongoClient.connect(url, {
       useNewUrlParser: true
