@@ -74,7 +74,8 @@ const rootSchema = new Schema(
         amm: String,
         ammS: String,
         amw: String,
-        amwS: String
+        amwS: String,
+        translations: Array
     },
     {
         timestamps: true
