@@ -32,7 +32,7 @@ router.post("/register", (req, res) => {
           if (err) throw err;
 
           if (result !== null) {
-            res.send({ error: "email is allready registerd" });
+            res.send({ error: "email is already registered", errorRu: "электронная почта уже зарегистрирована" });
 
           } else {
             //create new user
@@ -45,9 +45,9 @@ router.post("/register", (req, res) => {
 
             dbo.collection("users").insertOne(userObj, (err, result) => {
               if (err) throw err;
-              console.log("user registerd");
+              console.log("user registered");
               res.send({
-                success: 'user registerd',
+                success: 'user registered',
                 isRegisterd: true
               })
             })
@@ -57,7 +57,7 @@ router.post("/register", (req, res) => {
           db.close();
         });
     } else {
-      res.send({ error: 'no email was given' })
+      res.send({ error: 'email address was not provided', errorRu: "адрес электронной почты не был предоставлен" })
     }
   });
 
@@ -99,18 +99,18 @@ router.post("/login", (req, res) => {
                   access: redirectTo(result.role)
                 })
               } else {
-                res.send({ error: "user do not match password" })
+                res.send({ error: "user does not match password", errorRu: "пользователь не соответствует паролю" })
               }
 
             } catch (err) {
               console.log(err)
-              res.send({ error: 'password is inncorrect' })
+              res.send({ error: 'password is inncorrect', errorRu: "неверный пароль" })
             }
 
 
           } else {
             console.log("user is not in DataBase");
-            res.send({ error: "User is not registerd" });
+            res.send({ error: "user is not registered", errorRu: "пользователь не зарегистрирован" });
           }
 
           // res.send(result);
@@ -136,11 +136,11 @@ router.post("/isLogged", (req, res) => {
           access: redirectTo(cookie.role)
         })
       } else {
-        res.send({ error: 'invalid cookie' })
+        res.send({ error: 'invalid cookie', errorRu: "неверный файл cookie" })
       }
 
     } else {
-      res.send({ error: 'no cookie suplied' })
+      res.send({ error: 'no cookie supplied', errorRu: "файл cookie не поставляется" })
     }
 
   } catch (err) {
