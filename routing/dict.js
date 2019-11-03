@@ -476,71 +476,7 @@ router.put("/updatealltranslations1/", (req, res) => {
         });
     });
 });
-// router.put("/updatealltranslations/",(req, res) => {
-//   var sentence1 = "";
-//   var sentence1TranslateRu = "";
-//   var sentence1TranslateEn = "";
-//   var sentence1TranslateFr = "";
-//   var sentence1Sound = "";
-//   var translateEn = "";
-//   var rootId = "";
-//    function one() {
-//     return new Promise(resolve => {
-//       MongoClient.connect(url, function(err, db) {
-//         if (err) throw err;
-//         var dbo = db.db("mordict");
-//         var query = {$or:[{sentence1:"_"},{ 'sentence1' : { '$exists' : false}}]};
-//         dbo.collection("translations").findOne(query,function(err, results) {
-//            if (err) throw err;
 
-//             sentence1 = results.sentence;
-//             sentence1TranslateRu = results.sentenceTranslateRu;
-//             sentence1TranslateEn = results.sentenceTranslateEn;
-//             sentence1TranslateFr = results.sentenceTranslateFr;
-//             sentence1Sound = results.sentenceSound;
-//             translateEn = results.translateEn;
-//             rootId = results.root_id;
-//             console.log(results.sentence);
-//             console.log(results.translateEn);
-//             console.log("one",rootId); 
-//            db.close();
-//            resolve();      
-//         }); 
-//       })  
-//     });
-//   }
-
-//   function two() {
-//     return new Promise(resolve => {
-
-//       MongoClient.connect(url, function(err, db) {
-//         if (err) throw err;
-//           var dbo = db.db("mordict");
-//           var query = {translateEn: translateEn, root_id: rootId};
-//                 let insertValue = {
-//                   $set:{
-//                     sentence1: sentence1,
-//                     sentence1TranslateRu: sentence1TranslateRu,
-//                     sentence1TranslateEn: sentence1TranslateEn,
-//                     sentence1TranslateFr: sentence1TranslateFr,
-//                     sentence1Sound: sentence1Sound
-//                   }
-//                 };
-//                 dbo.collection("translations").updateOne(query, insertValue, function(err, result) {
-//                   if (err) throw err;
-//                   console.log("two",rootId);
-//                   db.close();
-//                   res.send(result);
-//                 });
-//        });
-
-
-
-//       });
-//   }
-//   one().then(() => two());
-//   // setInterval(one().then(() => two()), 20000);   
-// });
 
 //update
 
@@ -1388,33 +1324,7 @@ router.post(
         });
     }
 );
-// router.post(
-//   "/newsentence/:root_id/:sentence/:sentenceTranslate/:sentenceSound",
-//   (req, res) => {
-//     const root_id = req.params.root_id;
-//     const sentence = req.params.sentence;
-//     const sentenceTranslate = req.params.sentenceTranslate;
-//     const sentenceSound = req.params.sentenceSound;
-//     MongoClient.connect(url, { useNewUrlParser: true }, function(err, db) {
-//       if (err) throw err;
-//       var dbo = db.db("mordict");
-//       var newsentence = {
-//         root_id: root_id,
-//         sentence: sentence,
-//         sentenceTranslate: sentenceTranslate,
-//         sentenceSound: sentenceSound
-//       };
-//       dbo
-//         .collection("sentencies")
-//         .insertOne(newsentence, function(err, result) {
-//           if (err) throw err;
-//           console.log("1 sentence insered");
-//           res.send(result);
-//           db.close();
-//         });
-//     });
-//   }
-// );
+
 
 router.put("/newactive/:root_id/:active_id", (req, res) => {
     const root_id = req.params.root_id;
@@ -1680,7 +1590,7 @@ router.get("/createdump", (req, res) => {
     var backup = require("mongodb-backup");
     backup({
         uri: url, // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
-        root: "/copyDataBase",
+        root: "C://copyDataBase",
         callback: function (err) {
             if (err) {
                 console.error(err);
