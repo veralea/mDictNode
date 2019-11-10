@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 //remove in production
-app.use(cors());
+//app.use(cors());
 //until here
 
 app.use("/auth", authRouter);
