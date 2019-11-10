@@ -12,9 +12,6 @@ const url =
 const roles = require('./roles')
 
 
-
-
-
 router.post("/register", (req, res) => {
 
   // validate the request body first
@@ -65,7 +62,7 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
- 
+const today = new Date(); 
   try {
     if (Object.prototype.toString.call(req.body) !== "[object Object]")
       throw "request body is not an object";
@@ -84,7 +81,8 @@ router.post("/login", (req, res) => {
               //may brake if password is not encrypted
               let passwordFromDB = jwt.decode(result.password, secret);
               
-              if (req.body.password === passwordFromDB) {
+              if (req.body.password === passwordFromDB && 
+                (result.role === "student" && result.expDate > today || result.role === "admin" || result.role === "teacher" )) {
                 //create hashed cookie with users permissions
                 let userObj = {
                   id: result._id,
@@ -221,6 +219,5 @@ function redirectTo(role) {
     };
   }
 }
-
 
 module.exports = router;

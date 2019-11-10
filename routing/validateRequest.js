@@ -16,9 +16,7 @@ function validateRequest(req, res, next) {
             const cookieDecoded = jwt.decode(cookie, secret);
             const requestedPage = req.body.requestedPage;
             const role = cookieDecoded.role;
-          
-           
-        
+   
             let permision = false;
             res.pages = roles[role];         
 

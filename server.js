@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use(cookieParser());
 
 //remove in production
-// app.use(cors());
+app.use(cors());
 //until here
 
 app.use("/auth", authRouter);
@@ -55,42 +55,7 @@ MongoClient.connect(url, function(err, db) {
       db.close();
   });
 
-  // dbo.createCollection("translations", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection translations created!");
-  //   // db.close();
-  // });
-  // dbo.createCollection("phrases", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection phrases created!");
-  //   // db.close();
-  // });
-  // dbo.createCollection("families", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection families created!");
-  //   // db.close();
-  // });
-  // dbo.createCollection("familiesverbs", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection familiesverbs created!");
-  //   // db.close();
-  // });
-  // dbo.createCollection("antonyms", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection antonyms created!");
-  //   // db.close();
-  // });
-  // dbo.createCollection("synonyms", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection synonyms created!");
-  //   // db.close();
-  // });
 
-  // dbo.createCollection("activepassives", function(err, res) {
-  //   if (err) throw err;
-  //   console.log("Collection activepassives created!");
-  //   db.close();
-  // });
 });
 
 

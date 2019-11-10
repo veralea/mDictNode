@@ -262,12 +262,12 @@ router.post("/getroots", (req, res) => {
                     }
                     results.map((result, key) => {
                         var fs = require('fs');
-                        var filename = "C:\\milon\\" + result.root_id_old + ".wav";
-                        var newfaliname = "C:\\milon\\" + result.sound;
+                        // var filename = "public\\milon\\" + result.root_id_old + ".wav";
+                        var filename = "public\\milon\\" + result.sound.replace("wav","mp3");
                         fs.exists(filename, function (exists) {
                             if (exists) {
-                                fs.renameSync(filename, newfaliname);
-                                arrRoots.push(result.root_id_old);
+                                // fs.renameSync(filename, newfaliname);
+                                arrRoots.push(result.root_id);
                                 console.log(key + 1, results.length)
                                 if (key == 0) {
                                     resolve();
@@ -344,33 +344,33 @@ router.post("/getroots", (req, res) => {
 //       });
 //   });
 // });
-// router.get("/getverbsbyletters/:root_id/:letter1/:letter2/:letter3/:letter4", (req, res) => {
-//   const root_id = req.params.root_id;
-//   const letter1 = req.params.letter1;
-//   const letter2 = req.params.letter2;
-//   const letter3 = req.params.letter3;
-//   const letter4 = req.params.letter4;
-//   MongoClient.connect(url, function(err, db) {
-//     if (err) throw err;
-//     var dbo = db.db("mordict");
-//     var query = {
-//       root_id: {$ne:root_id},
-//       letter1: letter1,
-//       letter2: letter2,
-//       letter3: letter3,
-//       letter4: letter4
-//     };
-//     dbo
-//       .collection("roots")
-//       .find(query)
-//       .toArray(function(err, result) {
-//         if (err) throw err;
-//         res.send(result);
-//         console.dir(result);
-//         db.close();
-//       });
-//   });
-// });
+router.get("/getverbsbyletters/:root_id/:letter1/:letter2/:letter3/:letter4", (req, res) => {
+  const root_id = req.params.root_id;
+  const letter1 = req.params.letter1;
+  const letter2 = req.params.letter2;
+  const letter3 = req.params.letter3;
+  const letter4 = req.params.letter4;
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("mordict");
+    var query = {
+      root_id: {$ne:root_id},
+      letter1: letter1,
+      letter2: letter2,
+      letter3: letter3,
+      letter4: letter4
+    };
+    dbo
+      .collection("roots")
+      .find(query)
+      .toArray(function(err, result) {
+        if (err) throw err;
+        res.send(result);
+        console.dir(result);
+        db.close();
+      });
+  });
+});
 
 removeNikudot = function(word){
     wordWithoutNikudot = word.replace(/ְ|ּ|ָ|ַ|ֹ|ִ|ֶ||ֵֻ/g, "")
@@ -399,8 +399,8 @@ router.get("/getrootsbysearch/:search", (req, res) => {
         ,{ism:search},{ismS:search},{isw:search},{iswS:search},{imm:search},{immS:search},{imw:search},{imwS:search}
         ,{ns:search},{nsS:search},{nm:search},{nmS:search},{asm:search},{asmS:search},{asw:search},{aswS:search}
         ,{amm:search},{ammS:search},{amw:search},{amwS:search},
-        {"families.family":search},{"translations.translateRu":search},
-        {"translations.translateEn":search},{ "translations.translateEn": { $regex: search } },{"translations.translateFr":search}]};
+        {"families.family":search},{"translations.translateRu":{$regex :new RegExp("^"+search,"i")}},
+        { "translations.translateEn": { $regex: new RegExp(search,"i") } },{"translations.translateFr":new RegExp(search,"i")}]};
     
         dbo.collection("roots").find(query).toArray(function(err, result) {
             if (err) throw err;
@@ -1590,7 +1590,9 @@ router.get("/createdump", (req, res) => {
     var backup = require("mongodb-backup");
     backup({
         uri: url, // mongodb://<dbuser>:<dbpassword>@<dbdomain>.mongolab.com:<dbport>/<dbdatabase>
-        root: "E://copyDataBase",
+        root: "public/copyDataBase",
+        collections: [ 'roots' ],
+        tar: 'dump.tar',
         callback: function (err) {
             if (err) {
                 console.error(err);
@@ -1600,6 +1602,7 @@ router.get("/createdump", (req, res) => {
             }
         },
     });
+
 
 });
 
