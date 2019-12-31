@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require('jwt-simple');
+
 // const secret = require('../utils/config').myprivatekey;
 const { COOKIE_NAME, secret } = require('../utils/config');
 const validateRequest = require('./validateRequest');
@@ -62,11 +63,7 @@ router.put("/oldroots/", (req, res) => {
         arr.map((ar, key) => {
             console.log("yes");
             console.log(key);
-            // var dbo = db.db("mordict");
-            // dbo.collection("roots").updateOne({root_id:ar}, { $set : { root_id_old : ar }},function(err, result) {
-            //     if (err) throw err;
-            //     res.send(result);
-            //   });
+
         });
         db.close();
     });
@@ -225,7 +222,7 @@ router.get("/getphrases/:root_id", (req, res) => {
     });
 });
 //getroots с проверкой на существование звуковых файлов
-// router.get("/getroots/:benjan/:letter1/:letter2/:letter3/:letter4", (req, res) => {
+
 router.post("/getroots", (req, res) => {
     const benjan = req.body.benjan;
     const letter1 = req.body.letter1;
@@ -317,33 +314,7 @@ router.post("/getroots", (req, res) => {
 });
 //конец getroots с проверкой на существование звуковых файлов
 
-// router.get("/getroots/:benjan/:letter1/:letter2/:letter3/:letter4", (req, res) => {
-//   const benjan = req.params.benjan;
-//   const letter1 = req.params.letter1;
-//   const letter2 = req.params.letter2;
-//   const letter3 = req.params.letter3;
-//   const letter4 = req.params.letter4;
-//   MongoClient.connect(url, function(err, db) {
-//     if (err) throw err;
-//     var dbo = db.db("mordict");
-//     var query = {
-//       benjan: benjan,
-//       letter1: letter1,
-//       letter2: letter2,
-//       letter3: letter3,
-//       letter4: letter4
-//     };
-//     dbo
-//       .collection("roots")
-//       .find(query)
-//       .toArray(function(err, result) {
-//         if (err) throw err;
-//         res.send(result);
-//         console.dir(result);
-//         db.close();
-//       });
-//   });
-// });
+
 router.get("/getverbsbyletters/:root_id/:letter1/:letter2/:letter3/:letter4", (req, res) => {
   const root_id = req.params.root_id;
   const letter1 = req.params.letter1;
@@ -399,7 +370,7 @@ router.get("/getrootsbysearch/:search", (req, res) => {
         ,{ism:search},{ismS:search},{isw:search},{iswS:search},{imm:search},{immS:search},{imw:search},{imwS:search}
         ,{ns:search},{nsS:search},{nm:search},{nmS:search},{asm:search},{asmS:search},{asw:search},{aswS:search}
         ,{amm:search},{ammS:search},{amw:search},{amwS:search},
-        {"families.family":search},{"translations.translateRu":{$regex :new RegExp("^"+search,"i")}},
+        {"families.family":search},{"translations.translateRu":{$regex :new RegExp(search,"i")}},
         { "translations.translateEn": { $regex: new RegExp(search,"i") } },{"translations.translateFr":new RegExp(search,"i")}]};
     
         dbo.collection("roots").find(query).toArray(function(err, result) {
@@ -460,14 +431,7 @@ router.put("/updatealltranslations1/", (req, res) => {
             if (err) throw err;
             var dbo = db.db("mordict");
             var num = String(key + 1);
-            // dbo.collection("translations").updateMany({root_id_old:ar}, {$set:{root_id:num}}, function(err, result) {
-            //   if (err) throw err;
-            //   console.log("translations",num);
-            // });
-            // dbo.collection("synonyms").updateMany({root_id:ar}, {$set:{root_id_old:ar, root_id:num}}, function(err, result) {
-            //   if (err) throw err;
-            //   console.log("synonyms",num);
-            // });
+
             dbo.collection("activepassives").updateMany({ passive_id: ar }, { $set: { passive_id_old: ar, passive_id: num } }, function (err, result) {
                 if (err) throw err;
                 console.log("passive", num);
@@ -1560,11 +1524,7 @@ router.put("/deleteactive/:root_id", (req, res) => {
 
 router.put("/deletepassive/:root_id", (req, res) => {
     const root_id = req.params.root_id;
-    MongoClient.connect(
-        url,
-        {
-            useNewUrlParser: true
-        },
+    MongoClient.connect(url,{useNewUrlParser: true},
         function (err, db) {
             if (err) throw err;
             var dbo = db.db("mordict");
@@ -1586,6 +1546,20 @@ router.put("/deletepassive/:root_id", (req, res) => {
     );
 });
 
+router.get("/getanothersentence/:root_id", (req, res) => {
+    const root_id = req.params.root_id;
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        var dbo = db.db("mordict");
+        dbo.collection("roots")
+            .find({root_id: root_id})
+            .toArray(function (err, result) {
+                if (err) throw err;
+                res.send(result[0]);             
+                db.close();
+            });
+    });
+});
 router.get("/createdump", (req, res) => {
     var backup = require("mongodb-backup");
     backup({
@@ -1602,10 +1576,22 @@ router.get("/createdump", (req, res) => {
             }
         },
     });
-
-
 });
 
+router.put("/writefile",(req,res)=>{
+
+    var fs = require('fs');
+    const file = req.body.file;
+    console.warn("writefile",file);
+    console.dir(file);
+    
+        fs.writeFile("public\\public\\milon\\"+"1.mp3", file, err =>{
+    if(err) throw err;
+    console.log("File whritten!");
+    });
+    res.send(true);
+    
+});
 
 
 module.exports = router;
