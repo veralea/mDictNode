@@ -20,7 +20,7 @@
     "mongodb-backup": "^1.6.9",
     "mongojs": "^2.6.0",
     "mongoose": "^5.4.19",
-    "npm": "^6.10.2",
+    "npm": "^6.14.6",
     "save": "^2.3.3"
   },
   "devDependencies": {}
